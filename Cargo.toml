@@ -1,0 +1,16 @@
+[package]
+name = "here"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.4"
+hyper = "1.6.0"
+tokio = { version = "1.46.1", features = ["rt", "rt-multi-thread"] }
+utoipa = "5.4.0"
+utoipa-axum = "0.2.0"
+serde = { version = "1", features = ["derive"] }
+utoipa-swagger-ui = { version = "4", features = ["axum"] }
+validator = { version = "0.20", features = ["derive"] }
+
+
