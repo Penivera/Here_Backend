@@ -1,6 +1,7 @@
 pub mod routes;
 pub mod schemas;
 pub mod utils;
+pub mod core;
 
 use routes::create_routes;
 use axum::Router;

@@ -1,6 +1,6 @@
-use serde::{Deserialize, Serialize};
+use serde::{self,Deserialize, Serialize};
 use validator::Validate;
-
+use crate::utils::utils::{hash_password_field};
 #[derive(Debug, Serialize, Validate, Deserialize)]
 pub struct SignUp {
     firt_name: String,
@@ -10,6 +10,7 @@ pub struct SignUp {
     #[validate(url)]
     image_url: String,
     //implement custom validator to hash password here
+    #[serde(deserialize_with = "hash_password_field")]
     password:String,
 }
 
