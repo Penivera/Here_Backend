@@ -10,3 +10,9 @@ pub enum Skill {
     Dancer,
     Videographer
 }
+
+enum AccountType{
+    Attendee,
+    Organizer,
+    Vendor
+}
