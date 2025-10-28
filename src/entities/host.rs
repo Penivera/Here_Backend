@@ -16,12 +16,13 @@ pub struct Model {
 
     // --- NEW SYNTAX: Relation ---
     #[sea_orm(
-        belongs_to = "super::user::Entity",
-        from = "Column::UserId",
-        to = "super::user::Column::Id",
+        belongs_to,
+        from = "user_id",
+        to = "id",
         on_delete = "Cascade"
     )]
     pub user: HasOne<super::user::Entity>,
+    #[sea_orm(has_many)]
     pub events: HasMany<super::event::Entity>,
 }
 

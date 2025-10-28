@@ -24,7 +24,7 @@ async fn main() {
 
     let db: DatabaseConnection = Database::connect(format!("{}?mode=rwc", settings.database_url)).await.expect("Failed to Initialise Database connection");
     info!("Database connection established.");
-    Migrator::up(&db, None).await?;
+    Migrator::up(&db, None).await.expect("Failed to run database migrations");
     
 
 }

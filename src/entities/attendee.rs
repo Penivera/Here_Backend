@@ -9,19 +9,19 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub user_id: i32,
 
-    #[sea_orm(default_value = 0)]
-    pub rsvp_count: i32,
+    
 
     // --- NEW SYNTAX: Relation ---
     #[sea_orm(
-        belongs_to = "super::user::Entity",
-        from = "Column::UserId",
-        to = "super::user::Column::Id",
+        belongs_to,
+        from = "user_id",
+        to = "id",
         on_delete = "Cascade"
     )]
     pub user: HasOne<super::user::Entity>,
+    /// SECTION --- NEW SYNTAX: Relation ---
+    #[sea_orm(has_many)]
+    pub attendance: HasMany<super::attendance::Entity>,
 }
-
-// No `enum Relation` or `impl Related` needed here either.
 
 impl ActiveModelBehavior for ActiveModel {}

@@ -1,7 +1,7 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 use chrono::Utc;
-use super::AccountType;
+use super::{AccountType};
 
 #[sea_orm::model] // This macro now reads the relation attributes
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
@@ -9,7 +9,8 @@ use super::AccountType;
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i32,
-    
+    #[sea_orm(unique)]
+    pub username: String,
     #[sea_orm(unique)]
     pub email: String,
     pub password: String,
@@ -17,6 +18,9 @@ pub struct Model {
     pub last_name: Option<String>,
     // The "discriminator" column
     pub account_type: AccountType,
+
+    #[sea_orm(has_many)]
+    pub skills: HasMany<super::skills::Entity>,
 
     #[sea_orm(default_value = "true")]
     pub is_active: bool,
@@ -26,14 +30,11 @@ pub struct Model {
 
     #[sea_orm(default_expr = "Utc::now()")]
     pub updated_at: DateTimeUtc,
-    // --- NEW SYNTAX: Relations ---
-    // These fields are virtual and tell the macro to build
-    // the Relation enum and Impl Related traits.
-
-    #[sea_orm(has_one = "super::attendee::Entity")]
+  
+    #[sea_orm(has_one)]
     pub attendee: HasOne<super::attendee::Entity>,
 
-    #[sea_orm(has_one = "super::host::Entity")]
+    #[sea_orm(has_one)]
     pub host: HasOne<super::host::Entity>,
 }
 
