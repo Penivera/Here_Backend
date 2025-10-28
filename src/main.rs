@@ -3,8 +3,10 @@ pub mod schemas;
 pub mod core;
 pub mod utils;
 use here::core::configs::CONFIG as settings;
-use dotenv::dotenv;
 use deadpool_redis::{Config as RedisConfig, Runtime};
+use tracing::{info};
+use sea_orm::{Database, DatabaseConnection};
+use migration::{Migrator, MigratorTrait};
 
 
 
@@ -20,6 +22,9 @@ async fn main() {
         .expect("Failed to create Redis pool");
     info!("Redis connection pool created.");
 
-    let db: DatabaseConnection = Database::connect(format!("{}?mode=rwc", settings.database_url)).await?;
+    let db: DatabaseConnection = Database::connect(format!("{}?mode=rwc", settings.database_url)).await.expect("Failed to Initialise Database connection");
+    info!("Database connection established.");
+    Migrator::up(&db, None).await?;
+    
 
 }

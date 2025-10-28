@@ -11,8 +11,3 @@ pub enum Skill {
     Videographer
 }
 
-enum AccountType{
-    Attendee,
-    Organizer,
-    Vendor
-}
