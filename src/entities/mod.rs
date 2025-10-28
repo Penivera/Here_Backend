@@ -4,10 +4,9 @@ pub mod host;
 pub mod attendee;
 pub mod skills;
 pub mod attendance;
-pub mod preference;
 pub mod event_category;
 pub mod motivation;
-pub mod preference;
+
 
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};

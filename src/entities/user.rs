@@ -36,6 +36,9 @@ pub struct Model {
 
     #[sea_orm(has_one)]
     pub host: HasOne<super::host::Entity>,
+
+    #[sea_orm(has_many)]
+    pub preferences: HasMany<super::preference::Entity>,
 }
 
 // NO MORE `enum Relation` or `impl Related` blocks.
