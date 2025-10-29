@@ -1,3 +1,4 @@
+pub mod prelude;
 pub mod user;
 pub mod event;
 pub mod host;
@@ -8,6 +9,7 @@ pub mod motivation;
 pub mod categories_join;
 pub mod event_categories;
 pub mod link;
+pub mod attendee_motivations;
 
 
 use sea_orm::entity::prelude::*;

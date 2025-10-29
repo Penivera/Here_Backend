@@ -6,7 +6,6 @@ use here::core::configs::CONFIG as settings;
 use deadpool_redis::{Config as RedisConfig, Runtime};
 use tracing::{info};
 use sea_orm::{Database, DatabaseConnection};
-use migration::{Migrator, MigratorTrait};
 
 
 
@@ -24,7 +23,8 @@ async fn main() {
 
     let db: DatabaseConnection = Database::connect(format!("{}?mode=rwc", settings.database_url)).await.expect("Failed to Initialise Database connection");
     info!("Database connection established.");
-    Migrator::up(&db, None).await.expect("Failed to run database migrations");
-    
+    db.get_schema_registry("my_crate::entity::*").sync(&db).await.expect("Failed to sync schema registry");
+    info!("Database schema synchronized.");
+
 
 }

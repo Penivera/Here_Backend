@@ -1,6 +1,7 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
-use super::{Motivation};
+use super::Motivation;
+
 #[sea_orm::model]
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "motivations")]
@@ -14,3 +15,13 @@ pub struct Model {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+impl Related<super::attendee::Entity> for Entity {
+    fn to() -> RelationDef {
+        super::attendee_motivations::Relation::Attendee.def()
+    }
+
+    fn via() -> Option<RelationDef> {
+        Some(super::attendee_motivations::Relation::Motivation.def().rev())
+    }
+}

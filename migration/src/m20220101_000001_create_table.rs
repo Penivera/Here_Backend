@@ -179,10 +179,66 @@ impl MigrationTrait for Migration {
             )
             .await?;
 
+        // Create motivations table
+        manager
+            .create_table(
+                Table::create()
+                    .table(Motivations::Table)
+                    .if_not_exists()
+                    .col(
+                        ColumnDef::new(Motivations::Id)
+                            .integer()
+                            .not_null()
+                            .primary_key()
+                            .auto_increment(),
+                    )
+                    .col(ColumnDef::new(Motivations::Motivation).string_len(64).not_null().unique_key())
+                    .to_owned(),
+            )
+            .await?;
+
+        // Create attendee_motivations join table
+        manager
+            .create_table(
+                Table::create()
+                    .table(AttendeeMotivations::Table)
+                    .if_not_exists()
+                    .col(ColumnDef::new(AttendeeMotivations::AttendeeId).integer().not_null())
+                    .col(ColumnDef::new(AttendeeMotivations::MotivationId).integer().not_null())
+                    .primary_key(
+                        Index::create()
+                            .name("pk_attendee_motivations")
+                            .col(AttendeeMotivations::AttendeeId)
+                            .col(AttendeeMotivations::MotivationId),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk_attendee_motivations_attendee")
+                            .from(AttendeeMotivations::Table, AttendeeMotivations::AttendeeId)
+                            .to(Attendees::Table, Attendees::UserId)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .foreign_key(
+                        ForeignKey::create()
+                            .name("fk_attendee_motivations_motivation")
+                            .from(AttendeeMotivations::Table, AttendeeMotivations::MotivationId)
+                            .to(Motivations::Table, Motivations::Id)
+                            .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .to_owned(),
+            )
+            .await?;
+
         Ok(())
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        manager
+            .drop_table(Table::drop().table(AttendeeMotivations::Table).to_owned())
+            .await?;
+        manager
+            .drop_table(Table::drop().table(Motivations::Table).to_owned())
+            .await?;
         manager
             .drop_table(Table::drop().table(Attendance::Table).to_owned())
             .await?;
@@ -271,5 +327,19 @@ enum Attendance {
     Status,
     CreatedAt,
     UpdatedAt,
+}
+
+#[derive(DeriveIden)]
+enum Motivations {
+    Table,
+    Id,
+    Motivation,
+}
+
+#[derive(DeriveIden)]
+enum AttendeeMotivations {
+    Table,
+    AttendeeId,
+    MotivationId,
 }
 

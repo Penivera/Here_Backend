@@ -22,10 +22,27 @@ pub struct Model {
     /// SECTION --- NEW SYNTAX: Relation ---
     #[sea_orm(has_many)]
     pub attendance: HasMany<super::attendance::Entity>,
-
-    #[sea_orm(has_many, through = "categories_join", to = "event_categories")]
-    pub event_categories: HasMany<super::event_categories::Entity>,
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+impl Related<super::event_categories::Entity> for Entity {
+    fn to() -> RelationDef {
+        super::categories_join::Relation::EventCategory.def()
+    }
+
+    fn via() -> Option<RelationDef> {
+        Some(super::categories_join::Relation::Attendee.def().rev())
+    }
+}
+
+impl Related<super::motivation::Entity> for Entity {
+    fn to() -> RelationDef {
+        super::attendee_motivations::Relation::Motivation.def()
+    }
+
+    fn via() -> Option<RelationDef> {
+        Some(super::attendee_motivations::Relation::Attendee.def().rev())
+    }
+}
 

@@ -3,8 +3,8 @@ name = "here"
 version = "0.1.0"
 edition = "2024"
 
-[workspace]
-members = [".", "migration"]
+# [workspace]
+# members = [".", "migration"]
 
 [dependencies]
 actix-web = "4.11.0"
@@ -17,7 +17,7 @@ redis = { version = "0.32.7", features = ["r2d2", "tokio-comp"] }
 env_logger = "0.11.8"
 serde = { version = "1.0.228", features = ["derive"] }
 validator = { version = "0.20.0", features = ["derive"] }
-sea-orm = { version = "2.0.0-rc", features = ["sqlx-sqlite", "runtime-tokio-rustls", "macros","debug-print"] }
+sea-orm = { version = "2.0.0-rc", features = ["sqlx-sqlite", "runtime-tokio-rustls", "macros","debug-print","entity-registry","schema-sync"] }
 bcrypt = "0.17.1"
 config = "0.15.18"
 tracing = "0.1.41"
@@ -26,5 +26,5 @@ tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
 chrono = "0.4.42"
 
 #NOTE - Keep the sea-orm-migration version in sync with the migration/Cargo.toml
-migration = { path = "migration" }
+# migration = { path = "migration" }
 serde_json = "1.0.145"

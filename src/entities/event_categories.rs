@@ -1,6 +1,6 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
-//use chrono::Utc;
+use chrono::Utc;
 use super::EventCategory;
 
 #[sea_orm::model]
@@ -14,14 +14,21 @@ pub struct Model {
 
     pub description: Option<String>,
 
-    #[sea_orm(default_value = "Utc::now()")]
-    pub created_at: Option<DateTimeUtc>,
+    #[sea_orm(default_expr = "Utc::now()")]
+    pub created_at: DateTimeUtc,
 
-    #[sea_orm(default_value = "Utc::now()")]
-    pub updated_at: Option<DateTimeUtc>,
-
-    #[sea_orm(has_many, via = "categories_join")]
-    pub users: HasMany<super::attendee::Entity>,
+    #[sea_orm(default_expr = "Utc::now()")]
+    pub updated_at: DateTimeUtc,
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+impl Related<super::attendee::Entity> for Entity {
+    fn to() -> RelationDef {
+        super::categories_join::Relation::Attendee.def()
+    }
+
+    fn via() -> Option<RelationDef> {
+        Some(super::categories_join::Relation::EventCategory.def().rev())
+    }
+}
