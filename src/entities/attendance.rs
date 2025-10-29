@@ -1,7 +1,7 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 use chrono::Utc;
-use super::{AttendanceStatus};
+use super::AttendanceStatus;
 
 #[sea_orm::model]
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
@@ -16,9 +16,10 @@ pub struct Model {
     pub created_at: DateTimeUtc,
     #[sea_orm(default_expr = "Utc::now()")]
     pub updated_at: DateTimeUtc,
-    /// SECTION --- NEW SYNTAX: Relation ---
+
     #[sea_orm(belongs_to, from = "event_id", to = "id")]
     pub event: HasOne<super::event::Entity>,
+
     #[sea_orm(belongs_to, from = "attendee_id", to = "user_id")]
     pub attendee: HasOne<super::attendee::Entity>,
 }

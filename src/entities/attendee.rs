@@ -22,6 +22,10 @@ pub struct Model {
     /// SECTION --- NEW SYNTAX: Relation ---
     #[sea_orm(has_many)]
     pub attendance: HasMany<super::attendance::Entity>,
+
+    #[sea_orm(has_many, through = "categories_join", to = "event_categories")]
+    pub event_categories: HasMany<super::event_categories::Entity>,
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+

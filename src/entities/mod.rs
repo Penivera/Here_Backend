@@ -6,6 +6,9 @@ pub mod skills;
 pub mod attendance;
 pub mod event_category;
 pub mod motivation;
+pub mod categories_join;
+pub mod event_categories;
+pub mod link;
 
 
 use sea_orm::entity::prelude::*;
