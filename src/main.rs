@@ -23,7 +23,7 @@ async fn main() {
 
     let db: DatabaseConnection = Database::connect(format!("{}?mode=rwc", settings.database_url)).await.expect("Failed to Initialise Database connection");
     info!("Database connection established.");
-    db.get_schema_registry("my_crate::entity::*").sync(&db).await.expect("Failed to sync schema registry");
+    db.get_schema_registry("here::entity::*").sync(&db).await.expect("Failed to sync schema registry");
     info!("Database schema synchronized.");
 
 

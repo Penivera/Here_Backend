@@ -1,6 +1,6 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
-
+use super::{EventType};
 #[sea_orm::model]
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "attendees")]
@@ -8,9 +8,8 @@ pub struct Model {
     // Primary Key AND Foreign Key
     #[sea_orm(primary_key, auto_increment = false)]
     pub user_id: i32,
-
+    pub preferred_event_type: EventType,
     
-
     // --- NEW SYNTAX: Relation ---
     #[sea_orm(
         belongs_to,

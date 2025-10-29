@@ -4,4 +4,4 @@ pub mod utils;
 pub mod core;
 pub mod handlers;
 pub mod services;
-pub mod entities;
+pub mod entity;
