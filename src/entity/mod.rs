@@ -10,7 +10,8 @@ pub mod categories_join;
 pub mod event_categories;
 pub mod link;
 pub mod attendee_motivations;
-
+pub mod location;
+pub mod types;
 
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
