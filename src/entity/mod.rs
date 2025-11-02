@@ -8,7 +8,6 @@ pub mod attendance;
 pub mod motivation;
 pub mod categories_join;
 pub mod event_categories;
-pub mod link;
 pub mod attendee_motivations;
 pub mod location;
 pub mod types;
