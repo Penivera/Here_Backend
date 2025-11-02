@@ -6,6 +6,7 @@ pub mod attendee;
 pub mod skills;
 pub mod attendance;
 pub mod motivation;
+pub mod user_motivations;
 pub mod categories_join;
 pub mod event_categories;
 pub mod attendee_motivations;
