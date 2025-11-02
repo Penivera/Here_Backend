@@ -1,7 +1,8 @@
 use serde::Deserialize;
 use config::{Config, ConfigError, Environment};
-use once_cell::sync::Lazy;
 use tracing::{info};
+use deadpool_redis::Pool as RedisPool;
+use sea_orm::DatabaseConnection;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct AppConfig {
@@ -29,13 +30,14 @@ impl AppConfig {
 
 }
 
+#[derive(Clone, Debug)]
+pub struct AppState {
+    pub db: DatabaseConnection,
+    pub redis_pool: RedisPool,
+    pub config: AppConfig,
+}
 
 
-
-
-pub static CONFIG: Lazy<AppConfig> = Lazy::new(|| {
-    AppConfig::from_env().expect("Failed to load configuration")
-});
 
 
 
