@@ -4,26 +4,26 @@ use validator::Validate;
 
 #[derive(Debug, Serialize, Validate, Deserialize)]
 pub struct SignUp {
-    firt_name: String,
-    last_name: String,
+    pub username:String,
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
     #[validate(email)]
-    email: String,
+    pub email: String,
     #[validate(url)]
-    avatar_url: String,
+    pub avatar_url: Option<String>,
     //implement custom validator to hash password here
     #[validate(length(min = 8))]
-    password:String,
+    pub password:String,
 }
 
 #[derive(Debug, Serialize, Validate, Deserialize)]
 pub struct SignShow {
-    username:String,
-    firt_name: String,
-    last_name: String,
+    pub id:i32,
+    pub username:String,
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
     #[validate(email)]
-    email: String,
+    pub email: String,
     #[validate(url)]
-    image_url: String,
-    //implement custom validator to hash password here
-    password:String,
+    pub avatar_url: Option<String>,
 }

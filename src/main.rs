@@ -1,12 +1,11 @@
-pub mod routes;
-pub mod schemas;
-pub mod core;
-pub mod utils;
+// rely on the library crate for modules (declared in src/lib.rs)
+// top-level modules are provided by the `here` crate
 use deadpool_redis::{Config as RedisConfig, Runtime};
 use tracing::{info};
 use sea_orm::{Database, DatabaseConnection};
 use here::core::configs::{AppConfig,AppState};
 use actix_web::{HttpServer, App};
+use actix_web::web::{Data};
 
 
 
@@ -36,8 +35,11 @@ async fn main() -> std::io::Result<()> {
     };
     HttpServer::new(move || {
         App::new()
-            .app_data(actix_web::web::Data::new(app_state.clone()))     
-    }).bind(("0.0.0.0",8080))?
+            .app_data(Data::new(app_state.clone()))
+            // register configured routes from the library crate
+            .configure(here::routes::auth::init)
+    })
+    .bind(("0.0.0.0",8080))?
     .run()
     .await
 

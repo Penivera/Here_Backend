@@ -19,6 +19,8 @@ pub struct Model {
     // The "discriminator" column
     pub account_type: AccountType,
 
+    pub avatar_url:Option<String>,
+
     #[sea_orm(has_many)]
     pub skills: HasMany<super::skills::Entity>,
 
