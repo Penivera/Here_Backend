@@ -1,8 +1,8 @@
+use super::{EventCategory, EventStatus, EventType, EventVisibility};
 use sea_orm::entity::prelude::*;
-use super::{EventType,EventCategory,EventStatus,EventVisibility};
 
 #[sea_orm::model]
-#[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel,serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, serde::Serialize, serde::Deserialize)]
 #[sea_orm(table_name = "events")]
 pub struct Model {
     #[sea_orm(primary_key)]
@@ -17,15 +17,11 @@ pub struct Model {
     #[sea_orm(foreign_key = "ForeignKey::hosts")]
     pub host_id: i32,
     #[sea_orm(belongs_to, from = "host_id", to = "user_id")]
-    pub host:HasOne<super::host::Entity>,
+    pub host: HasOne<super::host::Entity>,
     pub start_time: DateTimeUtc,
     pub end_time: DateTimeUtc,
     pub created_at: DateTimeUtc,
     pub updated_at: DateTimeUtc,
-
 }
-
-
-
 
 impl ActiveModelBehavior for ActiveModel {}

@@ -1,18 +1,17 @@
-pub mod prelude;
-pub mod user;
-pub mod event;
-pub mod host;
-pub mod attendee;
-pub mod skills;
 pub mod attendance;
-pub mod motivation;
-pub mod user_motivations;
-pub mod categories_join;
-pub mod event_categories;
+pub mod attendee;
 pub mod attendee_motivations;
+pub mod categories_join;
+pub mod event;
+pub mod event_categories;
+pub mod host;
 pub mod location;
+pub mod motivation;
+pub mod prelude;
+pub mod skills;
 pub mod types;
-
+pub mod user;
+pub mod user_motivations;
 
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -27,7 +26,17 @@ pub enum AccountType {
     Host,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumIter, DeriveActiveEnum, serde::Serialize, serde::Deserialize)]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    EnumIter,
+    DeriveActiveEnum,
+    serde::Serialize,
+    serde::Deserialize,
+)]
 #[sea_orm(rs_type = "String", db_type = "String(StringLen::N(10))")] // Tell SeaORM its DB type
 pub enum EventType {
     #[sea_orm(string_value = "Physical")]
@@ -36,8 +45,18 @@ pub enum EventType {
     Virtual,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumIter, DeriveActiveEnum, serde::Serialize, serde::Deserialize)]
-#[sea_orm(rs_type = "String", db_type = "Enum")] 
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    EnumIter,
+    DeriveActiveEnum,
+    serde::Serialize,
+    serde::Deserialize,
+)]
+#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "event_category")]
 pub enum EventCategory {
     #[sea_orm(string_value = "Conference")]
     Conference,
@@ -47,74 +66,124 @@ pub enum EventCategory {
     Workshop,
     #[sea_orm(string_value = "Webinar")]
     Webinar,
-    #[sea_orm(string_value="Religious")]
+    #[sea_orm(string_value = "Religious")]
     Religious,
-    #[sea_orm(string_value="Social")]
+    #[sea_orm(string_value = "Social")]
     Social,
-    #[sea_orm(string_value="Business")]
+    #[sea_orm(string_value = "Business")]
     Business,
 }
-#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumIter, DeriveActiveEnum, serde::Serialize, serde::Deserialize)]
-#[sea_orm(rs_type = "String", db_type = "Enum")] 
-pub enum Skill{
-    #[sea_orm(string_value="Event Planning")]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    EnumIter,
+    DeriveActiveEnum,
+    serde::Serialize,
+    serde::Deserialize,
+)]
+#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "skill")]
+pub enum Skill {
+    #[sea_orm(string_value = "Event Planning")]
     EventPlanning,
-    #[sea_orm(string_value="Marketing")]
+    #[sea_orm(string_value = "Marketing")]
     Marketing,
-    #[sea_orm(string_value="Sales")]
+    #[sea_orm(string_value = "Sales")]
     Sales,
-    #[sea_orm(string_value="Management")]
+    #[sea_orm(string_value = "Management")]
     Management,
-    #[sea_orm(string_value="Technical")]
+    #[sea_orm(string_value = "Technical")]
     Technical,
-    #[sea_orm(string_value="Videography")]
+    #[sea_orm(string_value = "Videography")]
     Videography,
-    #[sea_orm(string_value="Photography")]
+    #[sea_orm(string_value = "Photography")]
     Photography,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumIter, DeriveActiveEnum, serde::Serialize, serde::Deserialize)]
-#[sea_orm(rs_type = "String", db_type = "Enum")] 
-pub enum EventStatus{
-    #[sea_orm(string_value="Scheduled")]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    EnumIter,
+    DeriveActiveEnum,
+    serde::Serialize,
+    serde::Deserialize,
+)]
+#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "event_status")]
+pub enum EventStatus {
+    #[sea_orm(string_value = "Scheduled")]
     Scheduled,
-    #[sea_orm(string_value="Ongoing")]
+    #[sea_orm(string_value = "Ongoing")]
     Ongoing,
-    #[sea_orm(string_value="Completed")]
+    #[sea_orm(string_value = "Completed")]
     Completed,
-    #[sea_orm(string_value="Cancelled")]
+    #[sea_orm(string_value = "Cancelled")]
     Cancelled,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumIter, DeriveActiveEnum, serde::Serialize, serde::Deserialize)]
-#[sea_orm(rs_type = "String", db_type = "Enum")] 
-pub enum AttendanceStatus{
-    #[sea_orm(string_value="Registered")]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    EnumIter,
+    DeriveActiveEnum,
+    serde::Serialize,
+    serde::Deserialize,
+)]
+#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "attendance_status")]
+pub enum AttendanceStatus {
+    #[sea_orm(string_value = "Registered")]
     Registered,
-    #[sea_orm(string_value="CheckedIn")]
+    #[sea_orm(string_value = "CheckedIn")]
     CheckedIn,
-    #[sea_orm(string_value="NoShow")]
+    #[sea_orm(string_value = "NoShow")]
     NoShow,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumIter, DeriveActiveEnum, serde::Serialize, serde::Deserialize)]
-#[sea_orm(rs_type = "String", db_type = "Enum")] 
-pub enum EventVisibility{
-    #[sea_orm(string_value="Public")]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    EnumIter,
+    DeriveActiveEnum,
+    serde::Serialize,
+    serde::Deserialize,
+)]
+#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "event_visibility")]
+pub enum EventVisibility {
+    #[sea_orm(string_value = "Public")]
     Public,
-    #[sea_orm(string_value="Private")]
+    #[sea_orm(string_value = "Private")]
     Private,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, EnumIter, DeriveActiveEnum, serde::Serialize, serde::Deserialize)]
-#[sea_orm(rs_type = "String", db_type = "Enum")] 
-pub enum Motivation{
-    #[sea_orm(string_value="Networking")]
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    EnumIter,
+    DeriveActiveEnum,
+    serde::Serialize,
+    serde::Deserialize,
+)]
+#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "motivation")]
+pub enum Motivation {
+    #[sea_orm(string_value = "Networking")]
     Networking,
-    #[sea_orm(string_value="Learning")]
+    #[sea_orm(string_value = "Learning")]
     Learning,
-    #[sea_orm(string_value="Business")]
+    #[sea_orm(string_value = "Business")]
     Business,
-    #[sea_orm(string_value="Socializing")]
+    #[sea_orm(string_value = "Socializing")]
     Socializing,
 }

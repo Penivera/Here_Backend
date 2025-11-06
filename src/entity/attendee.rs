@@ -1,6 +1,6 @@
+use super::EventType;
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
-use super::{EventType};
 #[sea_orm::model]
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "attendees")]
@@ -9,14 +9,9 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub user_id: i32,
     pub preferred_event_type: EventType,
-    
+
     // --- NEW SYNTAX: Relation ---
-    #[sea_orm(
-        belongs_to,
-        from = "user_id",
-        to = "id",
-        on_delete = "Cascade"
-    )]
+    #[sea_orm(belongs_to, from = "user_id", to = "id", on_delete = "Cascade")]
     pub user: HasOne<super::user::Entity>,
     /// SECTION --- NEW SYNTAX: Relation ---
     #[sea_orm(has_many)]
@@ -44,4 +39,3 @@ impl Related<super::motivation::Entity> for Entity {
         Some(super::attendee_motivations::Relation::Attendee.def().rev())
     }
 }
-

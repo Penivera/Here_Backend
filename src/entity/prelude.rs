@@ -8,20 +8,55 @@
 pub use sea_orm::entity::prelude::*;
 
 // Re-export generated entity types for easy single-import usage.
-pub use super::user::{Entity as User, Model as UserModel, ActiveModel as UserActiveModel, Column as UserColumn, Relation as UserRelation};
-pub use super::event::{Entity as Event, Model as EventModel, ActiveModel as EventActiveModel, Column as EventColumn, Relation as EventRelation};
-pub use super::host::{Entity as Host, Model as HostModel, ActiveModel as HostActiveModel, Column as HostColumn, Relation as HostRelation};
-pub use super::attendee::{Entity as Attendee, Model as AttendeeModel, ActiveModel as AttendeeActiveModel, Column as AttendeeColumn, Relation as AttendeeRelation};
-pub use super::skills::{Entity as Skills, Model as SkillsModel, ActiveModel as SkillsActiveModel, Column as SkillsColumn, Relation as SkillsRelation};
-pub use super::attendance::{Entity as Attendance, Model as AttendanceModel, ActiveModel as AttendanceActiveModel, Column as AttendanceColumn, Relation as AttendanceRelation};
-pub use super::motivation::{Entity as Motivation, Model as MotivationModel, ActiveModel as MotivationActiveModel, Column as MotivationColumn, Relation as MotivationRelation};
-pub use super::categories_join::{Entity as CategoriesJoin, Model as CategoriesJoinModel, ActiveModel as CategoriesJoinActiveModel, Column as CategoriesJoinColumn, Relation as CategoriesJoinRelation};
-pub use super::event_categories::{Entity as EventCategories, Model as EventCategoriesModel, ActiveModel as EventCategoriesActiveModel, Column as EventCategoriesColumn, Relation as EventCategoriesRelation};
-pub use super::attendee_motivations::{Entity as AttendeeMotivations, Model as AttendeeMotivationsModel, ActiveModel as AttendeeMotivationsActiveModel, Column as AttendeeMotivationsColumn, Relation as AttendeeMotivationsRelation};
-pub use super::user_motivations::{Entity as UserMotivations, Model as UserMotivationsModel, ActiveModel as UserMotivationsActiveModel, Column as UserMotivationsColumn, Relation as UserMotivationsRelation};
-pub use super::location::{Entity as Location, Model as LocationModel, ActiveModel as LocationActiveModel, Column as LocationColumn, Relation as LocationRelation};
-
+pub use super::attendance::{
+    ActiveModel as AttendanceActiveModel, Column as AttendanceColumn, Entity as Attendance,
+    Model as AttendanceModel, Relation as AttendanceRelation,
+};
+pub use super::attendee::{
+    ActiveModel as AttendeeActiveModel, Column as AttendeeColumn, Entity as Attendee,
+    Model as AttendeeModel, Relation as AttendeeRelation,
+};
+pub use super::attendee_motivations::{
+    ActiveModel as AttendeeMotivationsActiveModel, Column as AttendeeMotivationsColumn,
+    Entity as AttendeeMotivations, Model as AttendeeMotivationsModel,
+    Relation as AttendeeMotivationsRelation,
+};
+pub use super::categories_join::{
+    ActiveModel as CategoriesJoinActiveModel, Column as CategoriesJoinColumn,
+    Entity as CategoriesJoin, Model as CategoriesJoinModel, Relation as CategoriesJoinRelation,
+};
+pub use super::event::{
+    ActiveModel as EventActiveModel, Column as EventColumn, Entity as Event, Model as EventModel,
+    Relation as EventRelation,
+};
+pub use super::event_categories::{
+    ActiveModel as EventCategoriesActiveModel, Column as EventCategoriesColumn,
+    Entity as EventCategories, Model as EventCategoriesModel, Relation as EventCategoriesRelation,
+};
+pub use super::host::{
+    ActiveModel as HostActiveModel, Column as HostColumn, Entity as Host, Model as HostModel,
+    Relation as HostRelation,
+};
+pub use super::location::{
+    ActiveModel as LocationActiveModel, Column as LocationColumn, Entity as Location,
+    Model as LocationModel, Relation as LocationRelation,
+};
+pub use super::motivation::{
+    ActiveModel as MotivationActiveModel, Column as MotivationColumn, Entity as Motivation,
+    Model as MotivationModel, Relation as MotivationRelation,
+};
+pub use super::skills::{
+    ActiveModel as SkillsActiveModel, Column as SkillsColumn, Entity as Skills,
+    Model as SkillsModel, Relation as SkillsRelation,
+};
+pub use super::user::{
+    ActiveModel as UserActiveModel, Column as UserColumn, Entity as User, Model as UserModel,
+    Relation as UserRelation,
+};
+pub use super::user_motivations::{
+    ActiveModel as UserMotivationsActiveModel, Column as UserMotivationsColumn,
+    Entity as UserMotivations, Model as UserMotivationsModel, Relation as UserMotivationsRelation,
+};
 
 // Re-export DB-specific types implemented in `types.rs` (PgPoint wrapper used by Location)
 pub use super::types::PgPoint;
-

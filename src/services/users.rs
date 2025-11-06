@@ -1,12 +1,15 @@
 use std::error::Error;
 
 use crate::entity::prelude::*;
+use crate::schemas::auth::{SignShow, SignUp};
+use crate::utils::utils::hash_password;
 use sea_orm::ActiveValue::Set;
 use sea_orm::DatabaseConnection;
-use crate::schemas::auth::{SignUp, SignShow};
-use crate::utils::utils::hash_password;
 
-pub async fn create_user(db: &DatabaseConnection, signup: SignUp) -> Result<SignShow, Box<dyn Error>> {
+pub async fn create_user(
+    db: &DatabaseConnection,
+    signup: SignUp,
+) -> Result<SignShow, Box<dyn Error>> {
     let new_user = UserActiveModel {
         username: Set(signup.username.clone()),
         first_name: Set(signup.first_name.clone()),
@@ -28,4 +31,3 @@ pub async fn create_user(db: &DatabaseConnection, signup: SignUp) -> Result<Sign
         avatar_url: signup.avatar_url,
     })
 }
-

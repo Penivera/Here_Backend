@@ -1,8 +1,8 @@
-use serde::Deserialize;
 use config::{Config, ConfigError, Environment};
-use tracing::{info};
 use deadpool_redis::Pool as RedisPool;
 use sea_orm::DatabaseConnection;
+use serde::Deserialize;
+use tracing::info;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct AppConfig {
@@ -15,19 +15,18 @@ pub struct AppConfig {
     pub smtp_password: String,
     pub smtp_from_email: String,
     pub database_url: String,
-
+    pub debug: bool,
 }
 
 impl AppConfig {
     pub fn from_env() -> Result<Self, ConfigError> {
-        dotenv::dotenv().ok(); 
+        dotenv::dotenv().ok();
         info!("Environment Variables loaded");
         Config::builder()
             .add_source(Environment::default())
             .build()?
             .try_deserialize()
     }
-
 }
 
 #[derive(Clone, Debug)]
@@ -36,9 +35,3 @@ pub struct AppState {
     pub redis_pool: RedisPool,
     pub config: AppConfig,
 }
-
-
-
-
-
-

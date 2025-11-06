@@ -49,14 +49,17 @@ mod postgres_types {
 
     // Implement TryGetable to retrieve from database
     impl TryGetable for PgPoint {
-        fn try_get_by<I: sea_orm::ColIdx>(res: &QueryResult, index: I) -> Result<Self, TryGetError> {
+        fn try_get_by<I: sea_orm::ColIdx>(
+            res: &QueryResult,
+            index: I,
+        ) -> Result<Self, TryGetError> {
             // Try getting as a string (WKT format) or parse from other formats
             match res.try_get_by::<Option<String>, I>(index.clone()) {
                 Ok(Some(s)) => {
                     // Parse WKT format: "POINT(x y)"
                     let s = s.trim();
                     if s.starts_with("POINT(") && s.ends_with(")") {
-                        let coords = &s[6..s.len()-1];
+                        let coords = &s[6..s.len() - 1];
                         let parts: Vec<&str> = coords.split_whitespace().collect();
                         if parts.len() == 2 {
                             if let (Ok(x), Ok(y)) = (parts[0].parse(), parts[1].parse()) {
@@ -80,7 +83,7 @@ mod postgres_types {
                     // Parse WKT format: "POINT(x y)"
                     let s = s.trim();
                     if s.starts_with("POINT(") && s.ends_with(")") {
-                        let coords = &s[6..s.len()-1];
+                        let coords = &s[6..s.len() - 1];
                         let parts: Vec<&str> = coords.split_whitespace().collect();
                         if parts.len() == 2 {
                             if let (Ok(x), Ok(y)) = (parts[0].parse(), parts[1].parse()) {
@@ -118,7 +121,9 @@ mod postgres_types {
 // SQLite-specific types (simple text representation)
 #[cfg(all(feature = "sqlx-sqlite", not(feature = "sqlx-postgres")))]
 mod sqlite_types {
-    use sea_orm::sea_query::{ArrayType, ColumnType as SeaColumnType, StringLen, ValueType, ValueTypeErr};
+    use sea_orm::sea_query::{
+        ArrayType, ColumnType as SeaColumnType, StringLen, ValueType, ValueTypeErr,
+    };
     use sea_orm::{QueryResult, TryGetError, TryGetable, Value};
     use serde::{Deserialize, Serialize};
 
@@ -145,13 +150,16 @@ mod sqlite_types {
 
     // Implement TryGetable to retrieve from database
     impl TryGetable for PgPoint {
-        fn try_get_by<I: sea_orm::ColIdx>(res: &QueryResult, index: I) -> Result<Self, TryGetError> {
+        fn try_get_by<I: sea_orm::ColIdx>(
+            res: &QueryResult,
+            index: I,
+        ) -> Result<Self, TryGetError> {
             match res.try_get_by::<Option<String>, I>(index.clone()) {
                 Ok(Some(s)) => {
                     // Parse WKT format: "POINT(x y)"
                     let s = s.trim();
                     if s.starts_with("POINT(") && s.ends_with(")") {
-                        let coords = &s[6..s.len()-1];
+                        let coords = &s[6..s.len() - 1];
                         let parts: Vec<&str> = coords.split_whitespace().collect();
                         if parts.len() == 2 {
                             if let (Ok(x), Ok(y)) = (parts[0].parse(), parts[1].parse()) {
@@ -174,7 +182,7 @@ mod sqlite_types {
                 Value::String(Some(s)) => {
                     let s = s.trim();
                     if s.starts_with("POINT(") && s.ends_with(")") {
-                        let coords = &s[6..s.len()-1];
+                        let coords = &s[6..s.len() - 1];
                         let parts: Vec<&str> = coords.split_whitespace().collect();
                         if parts.len() == 2 {
                             if let (Ok(x), Ok(y)) = (parts[0].parse(), parts[1].parse()) {

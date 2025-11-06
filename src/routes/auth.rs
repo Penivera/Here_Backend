@@ -1,4 +1,4 @@
-use actix_web::{web};
+use actix_web::web;
 
 /// Configure auth-related routes.
 ///
@@ -10,8 +10,5 @@ pub fn init(cfg: &mut web::ServiceConfig) {
 
     // Register auth handlers under the "/auth" prefix so endpoints become
     // e.g. POST /auth/signup
-    cfg.service(
-        web::scope("/auth")
-            .service(signup)
-    );
+    cfg.service(web::scope("/auth").service(signup));
 }

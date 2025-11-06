@@ -1,31 +1,36 @@
 // rely on the library crate for modules (declared in src/lib.rs)
 // top-level modules are provided by the `here` crate
+use actix_web::web::Data;
+use actix_web::web::ServiceConfig;
 use deadpool_redis::{Config as RedisConfig, Runtime};
-use tracing::{info};
+use here::core::configs::{AppConfig, AppState};
 use sea_orm::{Database, DatabaseConnection};
-use here::core::configs::{AppConfig,AppState};
-use actix_web::{HttpServer, App};
-use actix_web::web::{Data};
+use shuttle_actix_web::ShuttleActixWeb;
+use tracing::info;
 
-
-
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
+#[shuttle_runtime::main]
+async fn main() -> ShuttleActixWeb<impl FnOnce(&mut actix_web::web::ServiceConfig) + Send + Clone + 'static> {
+    let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
         .format_timestamp_millis()
-        .init();
+        .try_init();
+
     info!("Logger initialized.");
     let settings: AppConfig = AppConfig::from_env().expect("Failed to load configuration");
 
     let redis_cfg: RedisConfig = RedisConfig::from_url(&settings.redis_url);
-    let redis_pool= redis_cfg
+    let redis_pool = redis_cfg
         .create_pool(Some(Runtime::Tokio1))
         .expect("Failed to create Redis pool");
     info!("Redis connection pool created.");
 
-    let db: DatabaseConnection = Database::connect(format!("{}?mode=rwc", settings.database_url)).await.expect("Failed to Initialise Database connection");
+    let db: DatabaseConnection = Database::connect(format!("{}?mode=rwc", settings.database_url))
+        .await
+        .expect("Failed to Initialise Database connection");
     info!("Database connection established.");
-    db.get_schema_registry("crate::entity::*").sync(&db).await.expect("Failed to sync schema registry");
+    db.get_schema_registry("here::entity::*")
+        .sync(&db)
+        .await
+        .expect("Failed to sync schema registry");
     info!("Database schema synchronized.");
 
     let app_state = AppState {
@@ -33,14 +38,10 @@ async fn main() -> std::io::Result<()> {
         redis_pool,
         config: settings.clone(),
     };
-    HttpServer::new(move || {
-        App::new()
-            .app_data(Data::new(app_state.clone()))
-            // register configured routes from the library crate
-            .configure(here::routes::auth::init)
-    })
-    .bind(("0.0.0.0",8080))?
-    .run()
-    .await
-
+    let config = move |cfg: &mut ServiceConfig| {
+        cfg.app_data(Data::new(app_state.clone()));
+        // register configured routes from the library crate
+        cfg.configure(here::routes::auth::init);
+    };
+    Ok(config.into())
 }

@@ -1,6 +1,6 @@
+use super::types::PgPoint;
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
-use super::types::PgPoint;
 
 #[sea_orm::model]
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Serialize, Deserialize)]

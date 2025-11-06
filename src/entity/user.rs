@@ -1,7 +1,7 @@
+use super::AccountType;
+use chrono::Utc;
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
-use chrono::Utc;
-use super::{AccountType};
 
 #[sea_orm::model] // This macro now reads the relation attributes
 #[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
@@ -19,7 +19,7 @@ pub struct Model {
     // The "discriminator" column
     pub account_type: AccountType,
 
-    pub avatar_url:Option<String>,
+    pub avatar_url: Option<String>,
 
     #[sea_orm(has_many)]
     pub skills: HasMany<super::skills::Entity>,
@@ -32,13 +32,12 @@ pub struct Model {
 
     #[sea_orm(default_expr = "Utc::now()")]
     pub updated_at: DateTimeUtc,
-  
+
     #[sea_orm(has_one)]
     pub attendee: HasOne<super::attendee::Entity>,
 
     #[sea_orm(has_one)]
     pub host: HasOne<super::host::Entity>,
-
 }
 
 // NO MORE `enum Relation` or `impl Related` blocks.
