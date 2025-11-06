@@ -1,7 +1,7 @@
 use crate::core::configs::AppState;
 use crate::schemas::auth::{SignShow, SignUp};
 use crate::services::users::create_user;
-use actix_web::{Responder, Result, get, post, web};
+use actix_web::{Responder, Result, post, web};
 use validator::Validate;
 
 #[post("/signup")]
