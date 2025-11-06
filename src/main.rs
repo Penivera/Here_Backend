@@ -1,3 +1,4 @@
+use actix_web::web;
 // rely on the library crate for modules (declared in src/lib.rs)
 // top-level modules are provided by the `here` crate
 use actix_web::web::Data;
@@ -6,10 +7,12 @@ use deadpool_redis::{Config as RedisConfig, Runtime};
 use here::core::configs::{AppConfig, AppState};
 use here::docs::ApiDoc;
 use sea_orm::DatabaseConnection;
+use sea_orm::Schema;
 use sea_orm::SqlxPostgresConnector;
 use shuttle_actix_web::ShuttleActixWeb;
 use sqlx::PgPool;
 use tracing::info;
+use actix_web::middleware::Logger;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -17,11 +20,6 @@ use utoipa_swagger_ui::SwaggerUi;
 async fn main(
     #[shuttle_shared_db::Postgres] pool: PgPool,
 ) -> ShuttleActixWeb<impl FnOnce(&mut actix_web::web::ServiceConfig) + Send + Clone + 'static> {
-    let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
-        .format_timestamp_millis()
-        .try_init();
-
-    info!("Logger initialized.");
     let settings: AppConfig = AppConfig::from_env().expect("Failed to load configuration");
 
     let redis_cfg: RedisConfig = RedisConfig::from_url(&settings.redis_url);
@@ -32,6 +30,10 @@ async fn main(
 
     let db: DatabaseConnection = SqlxPostgresConnector::from_sqlx_postgres_pool(pool);
     info!("Database connection established.");
+
+    // Create a Schema object for potential future use (SeaORM's Schema does not have get_schema_builder).
+    // Rely on the schema registry sync below to synchronize entity schemas.
+    let _schema = Schema::new(db.get_database_backend());
 
     db.get_schema_registry("here::entity::*")
         .sync(&db)
@@ -46,12 +48,18 @@ async fn main(
         config: settings.clone(),
     };
     let config = move |cfg: &mut ServiceConfig| {
-        cfg.app_data(Data::new(app_state.clone()));
-        // register configured routes from the library crate
-        cfg.configure(here::routes::auth::init);
+        cfg.app_data(Data::new(app_state.clone())).service(
+            // Create a single root scope
+            web::scope("")
+                // Apply the middleware to this scope
+                .wrap(Logger::new(r#"%a - "%r" %s %b %T"#))
+                .configure(here::routes::users::init),
+        );
 
-        /// NOTE - Swagger Ui
-        cfg.service(SwaggerUi::new("/docs/{_:.*}").url("/api-docs/openapi.json", ApiDoc::openapi()));
+        // NOTE - Swagger UI
+        cfg.service(
+            SwaggerUi::new("/docs/{_:.*}").url("/api-docs/openapi.json", ApiDoc::openapi()),
+        );
     };
     Ok(config.into())
 }

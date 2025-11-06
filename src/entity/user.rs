@@ -17,6 +17,7 @@ pub struct Model {
     pub first_name: Option<String>,
     pub last_name: Option<String>,
     // The "discriminator" column
+    #[sea_orm(default_value = "Attendee")]
     pub account_type: AccountType,
 
     pub avatar_url: Option<String>,

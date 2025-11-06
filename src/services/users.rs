@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use crate::entity::prelude::*;
-use crate::schemas::auth::{SignShow, SignUp};
+use crate::schemas::user::{SignShow, SignUp};
 use crate::utils::utils::hash_password;
 use sea_orm::ActiveValue::Set;
 use sea_orm::DatabaseConnection;
