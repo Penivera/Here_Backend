@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 
 // --- 1. Define the shared AccountType enum ---
 #[derive(Debug, Clone, Copy, PartialEq, Eq, EnumIter, DeriveActiveEnum, Serialize, Deserialize)]
-#[sea_orm(rs_type = "String", db_type = "String(StringLen::N(10))")]
+#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "account_type")]
 pub enum AccountType {
     #[sea_orm(string_value = "Attendee")]
     Attendee,
@@ -37,7 +37,7 @@ pub enum AccountType {
     serde::Serialize,
     serde::Deserialize,
 )]
-#[sea_orm(rs_type = "String", db_type = "String(StringLen::N(10))")] // Tell SeaORM its DB type
+#[sea_orm(rs_type = "String", db_type = "Enum", enum_name = "event_type")] // Tell SeaORM its DB type
 pub enum EventType {
     #[sea_orm(string_value = "Physical")]
     Physical,

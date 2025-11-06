@@ -4,12 +4,16 @@ use actix_web::web::Data;
 use actix_web::web::ServiceConfig;
 use deadpool_redis::{Config as RedisConfig, Runtime};
 use here::core::configs::{AppConfig, AppState};
-use sea_orm::{Database, DatabaseConnection};
+use sea_orm::{DatabaseConnection};
 use shuttle_actix_web::ShuttleActixWeb;
+use sqlx::PgPool;
+use sea_orm::SqlxPostgresConnector;
 use tracing::info;
 
 #[shuttle_runtime::main]
-async fn main() -> ShuttleActixWeb<impl FnOnce(&mut actix_web::web::ServiceConfig) + Send + Clone + 'static> {
+async fn main(
+    #[shuttle_shared_db::Postgres] pool: PgPool,
+) -> ShuttleActixWeb<impl FnOnce(&mut actix_web::web::ServiceConfig) + Send + Clone + 'static> {
     let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
         .format_timestamp_millis()
         .try_init();
@@ -23,14 +27,14 @@ async fn main() -> ShuttleActixWeb<impl FnOnce(&mut actix_web::web::ServiceConfi
         .expect("Failed to create Redis pool");
     info!("Redis connection pool created.");
 
-    let db: DatabaseConnection = Database::connect(format!("{}?mode=rwc", settings.database_url))
-        .await
-        .expect("Failed to Initialise Database connection");
+    let db: DatabaseConnection = SqlxPostgresConnector::from_sqlx_postgres_pool(pool);
     info!("Database connection established.");
+
     db.get_schema_registry("here::entity::*")
         .sync(&db)
         .await
         .expect("Failed to sync schema registry");
+
     info!("Database schema synchronized.");
 
     let app_state = AppState {
