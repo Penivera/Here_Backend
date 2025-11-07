@@ -82,3 +82,15 @@ pub async fn get_user_by_id(
     })
 }
 
+pub async fn get_user_model_by_id(
+    db: &DatabaseConnection,
+    user_id: i32,
+) -> Result<crate::entity::user::Model, Box<dyn Error>> {
+    let user = User::find_by_id(user_id)
+        .one(db)
+        .await?
+        .ok_or("User not found")?;
+
+    Ok(user)
+}
+

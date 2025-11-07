@@ -3,14 +3,14 @@ use actix_web::{
     web::{Data, Json},
     Error, Result,
 };
-use actix_web_httpauth::extractors::bearer::BearerAuth;
 use tracing::error;
 use validator::Validate;
 
 use crate::core::configs::AppState;
 use crate::schemas::auth::{LoginRequest, LoginResponse, UserMeResponse};
-use crate::services::users::{authenticate_user, get_user_by_id};
-use crate::utils::utils::{decode_jwt, generate_jwt};
+use crate::services::users::authenticate_user;
+use crate::utils::auth_extractor::CurrentUser;
+use crate::utils::utils::generate_jwt;
 
 #[utoipa::path(
     post,
@@ -72,27 +72,10 @@ pub async fn login(
 )]
 #[get("/me")]
 pub async fn get_me(
-    data: Data<AppState>,
-    auth: BearerAuth,
+    current_user: CurrentUser,
 ) -> Result<Json<UserMeResponse>, Error> {
-    // Decode JWT token
-    let claims = decode_jwt(auth.token(), &data.config.secret_key).map_err(|e| {
-        error!("JWT decode error: {}", e);
-        error::ErrorUnauthorized("Invalid token")
-    })?;
-
-    // Parse user ID from claims
-    let user_id: i32 = claims.sub.parse().map_err(|e| {
-        error!("Failed to parse user ID: {}", e);
-        error::ErrorInternalServerError("Invalid token format")
-    })?;
-
-    // Get user from database
-    let user = get_user_by_id(&data.db, user_id).await.map_err(|e| {
-        error!("Database error: {}", e);
-        error::ErrorInternalServerError("Failed to retrieve user")
-    })?;
-
+    let user = current_user.0;
+    
     Ok(Json(UserMeResponse {
         id: user.id,
         username: user.username,

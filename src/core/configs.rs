@@ -2,6 +2,7 @@ use config::{Config, ConfigError, Environment, File, FileFormat};
 use deadpool_redis::Pool as RedisPool;
 use sea_orm::DatabaseConnection;
 use serde::Deserialize;
+use std::collections::HashMap;
 use tracing::info;
 
 #[derive(Debug, Deserialize, Clone)]
@@ -19,6 +20,7 @@ pub struct AppConfig {
 }
 
 impl AppConfig {
+    /// Create AppConfig from environment variables (for local development and Docker)
     pub fn from_env() -> Result<Self, ConfigError> {
         // 1. Load .env file (if it exists) into the environment
         dotenv::dotenv().ok();
@@ -44,6 +46,84 @@ impl AppConfig {
 
         // 5. Build and deserialize
         builder.build()?.try_deserialize()
+    }
+
+    /// Create AppConfig from Shuttle secrets (for Shuttle deployment)
+    /// 
+    /// This method accepts a HashMap of secrets from Shuttle and uses them
+    /// to populate the configuration fields. This is more flexible than
+    /// relying on environment variables alone.
+    /// 
+    /// # Example
+    /// ```rust
+    /// #[shuttle_runtime::main]
+    /// async fn main(
+    ///     #[shuttle_runtime::Secrets] secrets: shuttle_runtime::SecretStore,
+    /// ) -> ShuttleActixWeb<...> {
+    ///     let config = AppConfig::from_secrets(secrets.into_iter().collect())
+    ///         .expect("Failed to load configuration");
+    ///     // ...
+    /// }
+    /// ```
+    pub fn from_secrets(secrets: HashMap<String, String>) -> Result<Self, ConfigError> {
+        info!("Loading configuration from Shuttle secrets...");
+
+        // Helper to get required secret
+        let get_secret = |key: &str| -> Result<String, ConfigError> {
+            secrets
+                .get(key)
+                .cloned()
+                .ok_or_else(|| ConfigError::Message(format!("Missing required secret: {}", key)))
+        };
+
+        // Helper to parse numeric values
+        let parse_secret = |key: &str, default: u32| -> u32 {
+            secrets
+                .get(key)
+                .and_then(|v| v.parse().ok())
+                .unwrap_or(default)
+        };
+
+        // Helper to parse boolean values
+        let parse_bool = |key: &str, default: bool| -> bool {
+            secrets
+                .get(key)
+                .and_then(|v| v.parse().ok())
+                .unwrap_or(default)
+        };
+
+        Ok(Self {
+            secret_key: get_secret("SECRET_KEY")?,
+            hash_rounds: parse_secret("HASH_ROUNDS", 12),
+            redis_url: get_secret("REDIS_URL")?,
+            smtp_host: get_secret("SMTP_HOST")?,
+            smtp_port: secrets
+                .get("SMTP_PORT")
+                .and_then(|v| v.parse().ok())
+                .unwrap_or(587),
+            smtp_username: get_secret("SMTP_USERNAME")?,
+            smtp_password: get_secret("SMTP_PASSWORD")?,
+            smtp_from_email: get_secret("SMTP_FROM_EMAIL")?,
+            database_url: get_secret("DATABASE_URL")?,
+            debug: parse_bool("DEBUG", false),
+        })
+    }
+
+    /// Create AppConfig with fallback: try Shuttle secrets first, then environment
+    /// 
+    /// This is useful for flexible deployment scenarios where you might use
+    /// either Shuttle secrets or environment variables.
+    pub fn from_secrets_or_env(secrets: Option<HashMap<String, String>>) -> Result<Self, ConfigError> {
+        match secrets {
+            Some(secrets) if !secrets.is_empty() => {
+                info!("Using Shuttle secrets for configuration");
+                Self::from_secrets(secrets)
+            }
+            _ => {
+                info!("Using environment variables for configuration");
+                Self::from_env()
+            }
+        }
     }
 }
 
