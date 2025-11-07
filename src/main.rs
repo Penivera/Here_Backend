@@ -37,8 +37,6 @@ async fn main(
     let db: DatabaseConnection = SqlxPostgresConnector::from_sqlx_postgres_pool(pool);
     info!("Database connection established.");
 
-    // Create a Schema object for potential future use (SeaORM's Schema does not have get_schema_builder).
-    // Rely on the schema registry sync below to synchronize entity schemas.
     let _schema = Schema::new(db.get_database_backend());
 
     db.get_schema_registry("here::entity::*")

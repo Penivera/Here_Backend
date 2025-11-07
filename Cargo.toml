@@ -10,12 +10,12 @@ sqlx-sqlite = ["sea-orm/sqlx-sqlite"]
 
 [dependencies]
 actix-web = "4.11.0"
-deadpool-redis = "0.22.0"
+deadpool-redis = { version = "0.18.0", features = ["rt_tokio_1"] }
 dotenv = "0.15.0"
 utoipa = { version = "5.4.0", features = ["actix_extras"] }
 utoipa-actix-web = "0.1.2"
 utoipa-swagger-ui = { version = "9.0.2", features = ["actix-web","reqwest"] }
-redis = { version = "0.32.7", features = ["r2d2", "tokio-comp"] }
+redis = { version = "0.27.6", features = ["tokio-comp", "tokio-rustls-comp"] }
 serde = { version = "1.0.228", features = ["derive"] }
 validator = { version = "0.20.0", features = ["derive"] }
 sea-orm = { version = "2.0.0-rc", features = ["runtime-tokio-rustls", "macros","debug-print","entity-registry","schema-sync","sqlx-postgres","sqlx-sqlite"] }
