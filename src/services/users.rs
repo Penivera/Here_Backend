@@ -93,4 +93,3 @@ pub async fn get_user_model_by_id(
 
     Ok(user)
 }
-

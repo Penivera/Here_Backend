@@ -32,10 +32,7 @@ impl AppConfig {
             //    This is for `cargo shuttle run` (local dev).
             //    We make it `required(false)` so the app doesn't
             //    crash if it's not present (e.g., in Docker).
-            .add_source(
-                File::new("Secrets.toml", FileFormat::Toml)
-                    .required(false)
-            )
+            .add_source(File::new("Secrets.toml", FileFormat::Toml).required(false))
             // 4. Add environment variables as the highest-priority source.
             //    This reads from the real environment, which includes
             //    vars from:
@@ -49,11 +46,11 @@ impl AppConfig {
     }
 
     /// Create AppConfig from Shuttle secrets (for Shuttle deployment)
-    /// 
+    ///
     /// This method accepts a HashMap of secrets from Shuttle and uses them
     /// to populate the configuration fields. This is more flexible than
     /// relying on environment variables alone.
-    /// 
+    ///
     /// # Example
     /// ```rust
     /// #[shuttle_runtime::main]
@@ -110,10 +107,12 @@ impl AppConfig {
     }
 
     /// Create AppConfig with fallback: try Shuttle secrets first, then environment
-    /// 
+    ///
     /// This is useful for flexible deployment scenarios where you might use
     /// either Shuttle secrets or environment variables.
-    pub fn from_secrets_or_env(secrets: Option<HashMap<String, String>>) -> Result<Self, ConfigError> {
+    pub fn from_secrets_or_env(
+        secrets: Option<HashMap<String, String>>,
+    ) -> Result<Self, ConfigError> {
         match secrets {
             Some(secrets) if !secrets.is_empty() => {
                 info!("Using Shuttle secrets for configuration");

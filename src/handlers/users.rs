@@ -1,7 +1,10 @@
 use crate::core::configs::AppState;
 use crate::schemas::user::{SignShow, SignUp};
 use crate::services::users::create_user;
-use actix_web::{Responder, Result, get, post, web::{Json,Data},Error,error};
+use actix_web::{
+    Error, Responder, Result, error, get, post,
+    web::{Data, Json},
+};
 use tracing::error;
 use validator::Validate;
 
@@ -16,11 +19,7 @@ use validator::Validate;
     )
 )]
 #[post("/signup")]
-pub async fn signup(
-    data: Data<AppState>,
-    payload: Json<SignUp>,
-) -> Result<Json<SignShow>, Error> {
-
+pub async fn signup(data: Data<AppState>, payload: Json<SignUp>) -> Result<Json<SignShow>, Error> {
     // 1. Handle Validation Error (Client Error)
     payload.validate().map_err(|e| {
         error!("Validation error: {}", e);
@@ -33,16 +32,13 @@ pub async fn signup(
 
     // 2. Handle Service/Database Error (Server Error)
     let user: SignShow = create_user(&data.db, signup_data).await.map_err(|e| {
-        
         error!("Database error during user creation: {}", e);
-        
+
         // Send a generic, safe error to the client
         error::ErrorInternalServerError("An error occurred while creating the account.")
     })?;
     Ok(Json(user))
 }
-
-
 
 #[utoipa::path(
     get,
@@ -55,4 +51,3 @@ pub async fn signup(
 pub async fn health_check() -> impl Responder {
     "OK"
 }
-

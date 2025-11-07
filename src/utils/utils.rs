@@ -1,6 +1,6 @@
 use bcrypt::{DEFAULT_COST, hash, verify};
 use chrono::{Duration, Utc};
-use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
+use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode};
 use serde::{Deserialize, Serialize};
 
 pub fn hash_password(password: &str) -> String {
@@ -43,4 +43,3 @@ pub fn decode_jwt(token: &str, secret: &str) -> Result<Claims, jsonwebtoken::err
     )?;
     Ok(token_data.claims)
 }
-

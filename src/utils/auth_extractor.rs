@@ -1,4 +1,4 @@
-use actix_web::{dev::Payload, error, Error, FromRequest, HttpRequest};
+use actix_web::{Error, FromRequest, HttpRequest, dev::Payload, error};
 use actix_web_httpauth::extractors::bearer::BearerAuth;
 use futures::future::Future;
 use std::pin::Pin;
@@ -10,10 +10,10 @@ use crate::services::users::get_user_model_by_id;
 use crate::utils::utils::decode_jwt;
 
 /// Extractor for the currently authenticated user
-/// 
+///
 /// This can be used as a handler parameter to automatically validate JWT
 /// and fetch the user from the database.
-/// 
+///
 /// # Example
 /// ```
 /// #[get("/protected")]
@@ -33,7 +33,7 @@ impl FromRequest for CurrentUser {
     fn from_request(req: &HttpRequest, payload: &mut Payload) -> Self::Future {
         let req = req.clone();
         let mut payload = payload.take();
-        
+
         Box::pin(async move {
             // Extract Bearer token
             let auth = BearerAuth::from_request(&req, &mut payload)

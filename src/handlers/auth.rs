@@ -1,7 +1,6 @@
 use actix_web::{
-    error, get, post,
+    Error, Result, error, get, post,
     web::{Data, Json},
-    Error, Result,
 };
 use tracing::error;
 use validator::Validate;
@@ -71,11 +70,9 @@ pub async fn login(
     )
 )]
 #[get("/me")]
-pub async fn get_me(
-    current_user: CurrentUser,
-) -> Result<Json<UserMeResponse>, Error> {
+pub async fn get_me(current_user: CurrentUser) -> Result<Json<UserMeResponse>, Error> {
     let user = current_user.0;
-    
+
     Ok(Json(UserMeResponse {
         id: user.id,
         username: user.username,
