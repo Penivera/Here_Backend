@@ -58,13 +58,15 @@ async fn main(
                 // Apply the middleware to this scope
                 .wrap(Logger::new(r#"%a - "%r" %s %b %T"#))
                 .configure(here::routes::users::init)
-                .configure(here::routes::auth::init),
+                .configure(here::routes::auth::init)
+                .service(
+                    SwaggerUi::new("/docs/{_:.*}").url("/api-docs/openapi.json", ApiDoc::openapi()))
         );
 
         // NOTE - Swagger UI
-        cfg.service(
-            SwaggerUi::new("/docs/{_:.*}").url("/api-docs/openapi.json", ApiDoc::openapi()),
-        );
+        // cfg.service(
+        //     SwaggerUi::new("/docs/{_:.*}").url("/api-docs/openapi.json", ApiDoc::openapi()),
+        // );
     };
     Ok(config.into())
 }
