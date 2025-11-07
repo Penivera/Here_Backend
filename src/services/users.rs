@@ -2,9 +2,9 @@ use std::error::Error;
 
 use crate::entity::prelude::*;
 use crate::schemas::user::{SignShow, SignUp};
-use crate::utils::utils::hash_password;
-use sea_orm::ActiveValue::Set;
-use sea_orm::DatabaseConnection;
+use crate::utils::utils::{hash_password, verify_password};
+use sea_orm::ExprTrait;
+use sea_orm::{ActiveValue::Set, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter};
 
 pub async fn create_user(
     db: &DatabaseConnection,
@@ -31,3 +31,54 @@ pub async fn create_user(
         avatar_url: signup.avatar_url,
     })
 }
+
+pub async fn authenticate_user(
+    db: &DatabaseConnection,
+    identifier: &str,
+    password: &str,
+) -> Result<SignShow, Box<dyn Error>> {
+    // Try to find user by email or username
+    let user = User::find()
+        .filter(
+            UserColumn::Email
+                .eq(identifier)
+                .or(UserColumn::Username.eq(identifier)),
+        )
+        .one(db)
+        .await?
+        .ok_or("User not found")?;
+
+    // Verify password
+    if !verify_password(password, &user.password) {
+        return Err("Invalid password".into());
+    }
+
+    Ok(SignShow {
+        id: user.id,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        avatar_url: user.avatar_url,
+    })
+}
+
+pub async fn get_user_by_id(
+    db: &DatabaseConnection,
+    user_id: i32,
+) -> Result<SignShow, Box<dyn Error>> {
+    let user = User::find_by_id(user_id)
+        .one(db)
+        .await?
+        .ok_or("User not found")?;
+
+    Ok(SignShow {
+        id: user.id,
+        username: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        avatar_url: user.avatar_url,
+    })
+}
+

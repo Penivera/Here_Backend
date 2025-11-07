@@ -32,3 +32,5 @@ shuttle-shared-db = { version = "0.57.0", features = ["postgres", "sqlx"] }
 shuttle-actix-web = "0.57.0"
 sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio-rustls"] }
 tracing-actix-web = "0.7.19"
+jsonwebtoken = "9.3.0"
+actix-web-httpauth = "0.8.2"

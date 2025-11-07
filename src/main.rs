@@ -53,7 +53,8 @@ async fn main(
             web::scope("")
                 // Apply the middleware to this scope
                 .wrap(Logger::new(r#"%a - "%r" %s %b %T"#))
-                .configure(here::routes::users::init),
+                .configure(here::routes::users::init)
+                .configure(here::routes::auth::init),
         );
 
         // NOTE - Swagger UI
